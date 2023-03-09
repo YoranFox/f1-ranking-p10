@@ -1,0 +1,16 @@
+<div class="welcome-container">
+    <div class="input-container">
+        <input class="c-checkbox" type="checkbox" id="checkbox">
+        <div class="c-formContainer">
+            <form class="c-form" action="">
+                <input class="c-form__input" placeholder="Name" type="text" required [(ngModel)]="playerName"
+                    [ngModelOptions]="{standalone: true}">
+                <label class="c-form__buttonLabel" for="checkbox" (click)="onSubmit()">
+                    <button class="c-form__button" type="button">Join</button>
+                </label>
+                <label class="c-form__toggle" for="checkbox" data-title="Join the game"></label>
+            </form>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,59 @@
+<div class="home-container">
+    <h1 *ngIf="me">Welcome {{me.name}}</h1>
+
+    <div class="ranking-container">
+        <div class="title">
+            <h2>Ranking</h2>
+        </div>
+        <div class="ranking-bar-wrapper">
+            <div *ngFor="let player of players">
+                <div class="player-ranking-container">
+                    <div class="player-name" [class.me]="player.name === me?.name">
+                        {{player.name}}
+                    </div>
+
+                    <div class="ranking-bar-container">
+                        <span class="ranking-bar" [style.width]="rankingWdth(player.points)"></span><span
+                            class="points">{{player.points}}</span>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+    </div>
+    <div class="next-predictions-container">
+        <h2>Next Race</h2>
+        <div class="race-information" *ngIf="nextRace">
+            <h2>{{nextRace.RaceName}}</h2>
+            <label>Date</label>
+            <p>{{nextRace.Date}}</p>
+            <label>Time</label>
+            <p>{{nextRace.Time}}</p>
+        </div>
+        <div class="new-prediction-container" *ngIf="!myPrediction && !loading">
+            <h3>No Prediction Yet</h3>
+            <button (click)="goToPredict()">Start Predicting</button>
+        </div>
+        <div class="my-prediction-container" *ngIf="myPrediction">
+            <h3>My Prediction</h3>
+            <div class="information">
+
+                <label>P10</label>
+                <p>{{getDriverName(myPrediction.p10)}}</p>
+            </div>
+            <div class="information">
+                <label>First Retirement</label>
+                <p>{{getDriverName(myPrediction.retirement)}}</p>
+            </div>
+
+
+
+        </div>
+
+    </div>
+    <div class="results-container">
+
+    </div>
+</div>

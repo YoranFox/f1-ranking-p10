@@ -1,0 +1,40 @@
+<div class="predict-container">
+    <div class="race-information" *ngIf="nextRace">
+        <h2>{{nextRace.RaceName}}</h2>
+        <label>Date</label>
+        <p>{{nextRace.Date}}</p>
+        <label>Time</label>
+        <p>{{nextRace.Time}}</p>
+    </div>
+    <div class="p10-container">
+        <h3>Select p10 Driver</h3>
+        <div class="selected-driver" *ngIf="selectedP10Driver">
+            <span>{{selectedP10Driver.PermanentNumber}} {{selectedP10Driver.GivenName}} {{selectedP10Driver.FamilyName}}
+            </span>
+            <button (click)="changeP10 = true">Change</button>
+        </div>
+
+        <div class="driver-list" *ngIf="changeP10">
+            <div class="driver-container" *ngFor="let driver of drivers" (click)="onSelectP10(driver)">
+                {{driver.PermanentNumber}} {{driver.GivenName}} {{driver.FamilyName}}
+
+            </div>
+        </div>
+    </div>
+    <div class="retirement-container">
+        <h3>Select first Driver to retire</h3>
+        <div class="selected-driver" *ngIf="selectedRetirementDriver">
+            <span>{{selectedRetirementDriver.PermanentNumber}} {{selectedRetirementDriver.GivenName}}
+                {{selectedRetirementDriver.FamilyName}}</span>
+            <button (click)="changeRetirement = true">Change</button>
+        </div>
+        <div class="driver-list" *ngIf="changeRetirement">
+            <div class="driver-container" *ngFor="let driver of drivers" (click)="onSelectRetirement(driver)">
+                {{driver.PermanentNumber}} {{driver.GivenName}} {{driver.FamilyName}}
+            </div>
+
+        </div>
+    </div>
+
+    <button class="submit" (click)="onSubmit()">Submit</button>
+</div>

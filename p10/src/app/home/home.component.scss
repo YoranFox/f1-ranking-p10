@@ -1,0 +1,132 @@
+h1 {
+  left: -20px;
+  right: 20px;
+}
+
+.home-container {
+  display: flex;
+  margin: 20px;
+  flex-direction: column;
+}
+
+.title {
+  padding: 10px 10px;
+
+  color: #2b2d42;
+  background-color: #8d99ae;
+}
+
+.ranking-bar-wrapper {
+  padding: 10px;
+
+  border: 4px solid #8d99ae;
+}
+
+.ranking-container {
+  flex-basis: 100%;
+
+  border-radius: 10px;
+
+  //
+
+  .player-name {
+    width: 100px;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #585757;
+
+    &.me {
+      color: #585791;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+  }
+}
+
+.ranking-bar-container {
+  width: 100%;
+  display: flex;
+
+  .ranking-bar {
+    background-color: rgb(206, 67, 67);
+    height: 20px;
+    display: inline-block;
+    width: 0%;
+    min-width: 0.5em;
+    -webkit-transition: width 1s ease;
+    -moz-transition: width 1s ease;
+    -ms-transition: width 1s ease;
+    -o-transition: width 1s ease;
+    transition: width 1s ease;
+  }
+
+  .points {
+    display: inline-block;
+    line-height: 20px;
+    padding-left: 10px;
+  }
+}
+
+.player-ranking-container {
+  display: flex;
+  margin-bottom: 4px;
+}
+
+.race-information {
+  padding: 15px;
+  background-color: rgb(206, 67, 67);
+  color: #edf2f4;
+}
+
+label {
+  display: inline;
+  margin-right: 10px;
+  color: rgb(182, 182, 182);
+}
+p {
+  display: inline;
+  font-weight: 500;
+  margin-right: 20px;
+}
+
+.my-prediction-container {
+  background-color: #bebdbd;
+  display: flex;
+  flex-direction: column;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 10px;
+
+  label {
+    color: #edf2f4;
+  }
+  p {
+    font-size: 1.1rem;
+    margin: 0;
+  }
+
+  .information {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+.next-predictions-container {
+  margin-top: 20px;
+}
+
+.new-prediction-container {
+  background-color: #bebdbd;
+
+  display: flex;
+  flex-direction: column;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 10px;
+  button {
+    height: 40px;
+
+    padding: 10px 20px;
+  }
+}
