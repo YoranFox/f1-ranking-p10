@@ -1,5 +1,6 @@
 import { AfterViewInit, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subscription, map, Observable } from 'rxjs';
 import { getDriver } from 'src/app/data/drivers';
 import { getNextRaceNumber, getRace, schedule } from 'src/app/data/schedule';
 import { PlayersService } from 'src/app/services/players.service';
@@ -7,6 +8,7 @@ import {
   Prediction,
   PredictionsService,
 } from 'src/app/services/predictions.service';
+import { Result, ResultsService } from 'src/app/services/results.service';
 
 @Component({
   selector: 'app-races',
@@ -18,14 +20,16 @@ export class RacesComponent implements OnInit, AfterViewInit {
   getDriver = getDriver;
   getRace = getRace;
   selectedRace: number = getNextRaceNumber();
-  results: any[] = [];
+  results$: Observable<Result[]> | undefined;
+  sub: Subscription | undefined;
 
   predictions: Prediction[] = [];
 
   constructor(
     private readonly predictionsService: PredictionsService,
     private readonly playersService: PlayersService,
-    private router: Router
+    private router: Router,
+    private readonly resultsService: ResultsService
   ) {}
 
   ngAfterViewInit(): void {
@@ -33,9 +37,21 @@ export class RacesComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit() {
-    this.predictionsService
+    this.sub = this.predictionsService
       .getPredictionsByPlayer(this.playersService.me)
-      .subscribe((p) => (this.predictions = p));
+      .subscribe((p) => {
+        this.predictions = p;
+      });
+
+    this.results$ = this.resultsService.results$.pipe(
+      map((players) =>
+        players.filter((player) => player.raceNumber === this.selectedRace)
+      )
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.sub?.unsubscribe();
   }
 
   scrollToCard() {
@@ -88,6 +104,7 @@ export class RacesComponent implements OnInit, AfterViewInit {
 
   onSelectRace(raceNumber: number) {
     this.selectedRace = raceNumber;
+    this.resultsService.results$.subscribe();
     this.scrollToCard();
   }
 
@@ -96,8 +113,6 @@ export class RacesComponent implements OnInit, AfterViewInit {
   }
 
   doPrediction(raceNumber: number) {
-    console.log(raceNumber);
-
     this.router.navigate(['predict', raceNumber]);
   }
 }

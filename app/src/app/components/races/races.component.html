@@ -1,11 +1,7 @@
 <div class="card-wrapper" id="card-wrapper">
-  <div
-    class="card-container"
-    *ngFor="let race of races; let raceNumber = &quot;index+1&quot;"
-    (click)="onSelectRace(raceNumber)"
-    [class.selected]="selectedRace === raceNumber"
-    [id]="'card-' + race.Date"
-  >
+  <div class="card-container" *ngFor="let race of races; let raceNumber = &quot;index+1&quot;"
+    [class.past]="inPast(race.Date)" (click)="onSelectRace(raceNumber)" [class.selected]="selectedRace === raceNumber"
+    [id]="'card-' + race.Date">
     <div class="header">
       <span class="race-name">{{ race.RaceName }}</span>
       <span class="race-number">{{ raceNumber }}</span>
@@ -14,19 +10,21 @@
     <span class="race-date">{{ race.Date }}</span>
     <span class="race-time">{{ race.Time }}</span>
     <div class="my-prediction" *ngIf="getPrediction(raceNumber) as prediction">
-      <span class="driver-name" *ngIf="getDriver(prediction.p10) as driver"
-        >p10: {{ driver.GivenName }} {{ driver.FamilyName }}</span
-      >
-      <span class="driver-name" *ngIf="getDriver(prediction.retire) as driver"
-        >retire: {{ driver.GivenName }} {{ driver.FamilyName }}</span
-      >
+      <span class="my-prediction-title">My prediction</span>
+      <div class="driver-name-container" *ngIf="getDriver(prediction.p10) as driver">
+        <span class="driver-name-label">p10:</span><span class="driver-name"> {{ driver.GivenName }} {{
+          driver.FamilyName }}</span>
+      </div>
+      <div class="driver-name-container" *ngIf="getDriver(prediction.retire) as driver">
+        <span class="driver-name-label">First retire:</span>
+        <span class="driver-name"> {{ driver.GivenName }} {{
+          driver.FamilyName }}</span>
+      </div>
+
     </div>
     <div class="do-prediction-container" *ngIf="!getPrediction(raceNumber)">
-      <button
-        *ngIf="!inPast(race.Date)"
-        class="do-prediction-button"
-        (click)="doPrediction(raceNumber); $event.stopPropagation()"
-      >
+      <button *ngIf="!inPast(race.Date)" class="do-prediction-button"
+        (click)="doPrediction(raceNumber); $event.stopPropagation()">
         Make prediction
       </button>
       <button *ngIf="inPast(race.Date)" class="do-prediction-button" disabled>
@@ -36,25 +34,23 @@
   </div>
 </div>
 
-<div
-  class="results-container"
-  *ngIf="selectedRace && getRace(selectedRace) as race"
->
+<div class="results-container" *ngIf="selectedRace && getRace(selectedRace) as race">
   <span class="results-title">Results {{ race.RaceName }}</span>
   <div class="result-future-race" *ngIf="!inPast(race.Date)">
     Come back after the race!
   </div>
-  <div class="result-future-race"></div>
-  <div class="player-results-list">
-    <div class="result-item" *ngFor="let result of results">
+  <div class="player-results-list" *ngIf="inPast(race.Date)">
+    <div class="result-item" *ngFor="let result of results$ | async">
       <span class="player-name"> {{ result.playerName }}</span>
-      <div class="driver-container">
-        <span class="driver-name">{{ result.p10.name }}</span>
-        <span class="points-gain">{{ result.p10.points }}</span>
+      <div class="driver-container" *ngIf="getDriver(result.p10.driver) as driver">
+        <span class="label">p10:</span>
+        <span class="driver-name">{{ driver.GivenName }} {{ driver.FamilyName }}</span>
+        <span class="points-gain">{{ result.p10.points }}p</span>
       </div>
-      <div class="driver-container">
-        <span class="driver-name">{{ result.retire.name }}</span>
-        <span class="points-gain">{{ result.retire.points }}</span>
+      <div class="driver-container" *ngIf="getDriver(result.retire.driver) as driver">
+        <span class="label">First Retire:</span>
+        <span class="driver-name">{{ driver.GivenName }} {{ driver.FamilyName }}</span>
+        <span class="points-gain">{{ result.retire.points }}p</span>
       </div>
     </div>
   </div>

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Unsubscribe } from '@angular/fire/app-check';
 import { AngularFireDatabase } from '@angular/fire/compat/database';
 import { ref, onValue, set, DatabaseReference } from 'firebase/database';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 
 export interface Prediction {
   playerName: string;
@@ -27,6 +27,7 @@ export class PredictionsService {
   private predictionsSubject: Subject<Prediction[]> = new Subject<
     Prediction[]
   >();
+
   private unsubscribePredictByPlayer: Unsubscribe | undefined;
 
   public predictions$ = this.predictionsSubject.asObservable();
@@ -36,7 +37,7 @@ export class PredictionsService {
 
     onValue(this.predictionsRef, (snapshot) => {
       const data = snapshot.val() as PredictionsStored;
-      const predictions = this.transformPredictStoreData(data);
+      const predictions = transformPredictStoreData(data);
       this.predictionsSubject.next(predictions);
     });
   }
@@ -50,15 +51,16 @@ export class PredictionsService {
       this.db.database,
       'predictions/' + playerName
     );
-    const subscriber = new Subject<Prediction[]>();
-    onValue(playerPredictionsRef, (snapshot) => {
-      const data = snapshot.val() as PredictionsStoredPlayer;
-      const predictions = this.transformPlayerPredictStoreData(
-        playerName,
-        data
-      );
-      subscriber.next(predictions);
-    });
+    const subscriber = new BehaviorSubject<Prediction[]>([]);
+    this.unsubscribePredictByPlayer = onValue(
+      playerPredictionsRef,
+      (snapshot) => {
+        const data = snapshot.val() as PredictionsStoredPlayer;
+
+        const predictions = transformPlayerPredictStoreData(playerName, data);
+        subscriber.next(predictions);
+      }
+    );
 
     return subscriber.asObservable();
   }
@@ -75,23 +77,29 @@ export class PredictionsService {
       }
     );
   }
+}
 
-  private transformPredictStoreData(
-    storeData: PredictionsStored
-  ): Prediction[] {
-    return Object.entries(storeData).flatMap(([playerName, data]) => {
-      return this.transformPlayerPredictStoreData(playerName, data);
-    });
+export function transformPredictStoreData(
+  storeData: PredictionsStored
+): Prediction[] {
+  if (!storeData) {
+    return [];
   }
+  return Object.entries(storeData).flatMap(([playerName, data]) => {
+    return transformPlayerPredictStoreData(playerName, data);
+  });
+}
 
-  private transformPlayerPredictStoreData(
-    playerName: string,
-    storeData: PredictionsStoredPlayer
-  ): Prediction[] {
-    return Object.entries(storeData).map(([raceNumber, predictData]) => ({
-      playerName,
-      raceNumber,
-      ...predictData,
-    }));
+export function transformPlayerPredictStoreData(
+  playerName: string,
+  storeData: PredictionsStoredPlayer
+): Prediction[] {
+  if (!storeData) {
+    return [];
   }
+  return Object.entries(storeData).map(([raceNumber, predictData]) => ({
+    playerName,
+    raceNumber: Number(raceNumber),
+    ...predictData,
+  }));
 }

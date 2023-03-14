@@ -1,112 +1,173 @@
 .card-wrapper {
-    display: flex;
-    overflow: scroll;
-    flex-direction: row;
-    column-gap: 20px;
-    width: calc(100% + 40px);
-    transform: translateX(-20px);
-    padding-bottom: 10px;
-    padding-top: 10px;
+  display: flex;
+  overflow: scroll;
+  flex-direction: row;
+  column-gap: 20px;
+  width: calc(100% + 40px);
+  transform: translateX(-20px);
+  padding-bottom: 10px;
+  padding-top: 10px;
 }
 
 .card-container {
-    display: flex;
-    background-color: rgb(30, 34, 54);
-    border-radius: 10px;
-    padding: 15px;
-    color: #F1F1E6;
-    flex-direction: column;
+  display: flex;
+  background-color: rgb(30, 34, 54);
+  border-radius: 10px;
+  padding: 15px;
+  color: #f1f1e6;
+  flex-direction: column;
 
-    &.selected {
-        outline: solid 2px #F1F1E6;
-    }
+  &.selected {
+    outline: solid 2px #f1f1e6;
+  }
+
+  &.past {
+    opacity: 0.8;
+    filter: brightness(0.7);
+  }
 }
 
 .card-container:first-child {
-    margin-left: 20px;
+  margin-left: 20px;
 }
 
 .race-name {
-    white-space:nowrap;
-    font-size: 1.1rem;
-    
+  white-space: nowrap;
+  font-size: 1.1rem;
 }
 
 .header {
-    // min-width: 280px;
-    display: flex;
-    justify-content: space-between;
+  // min-width: 280px;
+  display: flex;
+  justify-content: space-between;
 }
 
 .race-number {
-    margin-left: 30px;
-    width: 23px;
-    height: 23px;
-    border: 1px solid white;
-    border-radius: 100%;
-    text-align: center;
-    line-height: 27px;
-    font-size: .9rem;
+  margin-left: 30px;
+  width: 23px;
+  height: 23px;
+  border: 1px solid white;
+  border-radius: 100%;
+  text-align: center;
+  line-height: 27px;
+  font-size: 0.9rem;
 }
 
-.race-date, .race-time {
-    font-size: .9;
-    color:#BCC2DA;
+.race-date,
+.race-time {
+  font-size: 0.9;
+  color: #bcc2da;
+}
+
+.race-time {
+  display: block;
+  margin-bottom: 5px;
 }
 
 .driver-name {
-    
 }
 
 .do-prediction-container {
-    margin-top: 20px;
+  margin-top: auto;
 }
 
 .do-prediction-button {
-    background-color: #B48B1A;
-    color: #F1F1E6;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 5px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 1rem;
-    font-weight: 700;
+  background-color: #b48b1a;
+  color: #f1f1e6;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 5px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 1rem;
+  font-weight: 700;
 }
 
 .do-prediction-button:disabled {
-    opacity: .5;
+  opacity: 0.5;
+}
+
+.driver-name-container {
+  display: flex;
+  justify-content: space-between;
+
+  span {
+    white-space: nowrap;
+  }
+}
+
+.driver-name-label {
+  color: #bcc2da;
+}
+
+.driver-name {
+  margin-left: 10px;
 }
 
 .results-container {
-    flex-grow: 1;
-    background-color: #F1F1E6;
-    width: calc(100% + 40px);
-    transform: translateX(-20px);
-    border-top-right-radius: 30px;
-    border-top-left-radius: 30px;
-    margin-top: 20px;
+  flex-grow: 1;
+  background-color: #f1f1e6;
+  width: calc(100% + 40px);
+  transform: translateX(-20px);
+  border-top-right-radius: 30px;
+  border-top-left-radius: 30px;
+  margin-top: 20px;
+  padding-bottom: 50px;
 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .results-title {
-    color: rgb(30, 34, 54);
-    font-size: 1.1rem;
-    font-weight: 700;
-    margin: 30px 0;
+  color: rgb(30, 34, 54);
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 30px 0;
 }
 
 .result-container {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .driver-container {
-    flex-grow: 1;
+  flex-grow: 1;
+}
 
+.my-prediction {
+  display: flex;
+  flex-direction: column;
+  margin-top: 15px;
+}
+
+.my-prediction-title {
+  margin-bottom: 10px;
+  color: #b48b1a;
+}
+
+.player-results-list {
+  .player-name {
+    font-weight: 700;
+    margin-bottom: 10px;
+    display: block;
+  }
+  .driver-name {
+    margin-right: 20px;
+  }
+
+  .label {
+    min-width: 150px;
+  }
+
+  .driver-container {
+    display: flex;
+  }
+
+  .points-gain {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-left: auto;
+  }
 }

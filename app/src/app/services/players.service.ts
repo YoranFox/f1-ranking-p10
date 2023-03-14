@@ -35,6 +35,10 @@ export class PlayersService {
           ...data,
         };
       });
+      if (me && !players.some((player) => player.name === me)) {
+        localStorage.removeItem('me');
+        router.navigate(['login']);
+      }
 
       players = players.sort((a, b) => b.points - a.points);
       this.playersSubject.next(players);
@@ -52,5 +56,10 @@ export class PlayersService {
     return set(ref(this.db.database, 'players/' + playerName), {
       points: 0,
     });
+  }
+
+  setMe(playerName: string) {
+    localStorage.setItem('me', playerName);
+    this.me = playerName;
   }
 }

@@ -1,69 +1,65 @@
 .header {
-    background-color: rgb(30, 34, 54);
-    border-bottom-left-radius: 30px;
-    border-bottom-right-radius: 30px;
-    color: #F1F1E6;
-    padding: 30px;
-    padding-bottom: 40px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+  background-color: rgb(30, 34, 54);
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+  color: #f1f1e6;
+  padding: 30px;
+  padding-bottom: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .welcome-title {
-    font-size: 1.3rem;
-    
-    .name {
-        font-weight: 700;
-    }
+  font-size: 1.3rem;
 
+  .name {
+    font-weight: 700;
+  }
 }
 
 .profile-image {
-    height: 40px;
-    width: 40px;
-    border-radius: 100%;
-    border: 2px solid #ffffff;
+  height: 40px;
+  width: 40px;
+  border-radius: 100%;
+  border: 2px solid #ffffff;
 }
 
 .main-container {
-    display: flex;
-    top: 40px;
-    margin: 0 20px;
-    flex-direction: column;
-    min-height: 100vh;
-
+  display: flex;
+  top: 40px;
+  margin: 0 20px;
+  flex-direction: column;
+  min-height: 100vh;
 }
 
 .background {
-    content: "";
-    margin: 0;
+  content: "";
+  margin: 0;
 
-    width: 100vw;
-    height: 100vh;
-    overflow: none;
-    position: fixed;
-    left: 0;
-    right: 0;
-    // background-image: url("/assets/f1_background.jpg");
-    background-color: #00000046;
-    box-shadow: inset 0 0 8rem 6em #000000;
-    background-image: url("/assets/f1_background.jpg");
-    background-position: center;
-    background-size: cover; 
-    z-index: -1;
-    
+  width: 100vw;
+  height: 100vh;
+  overflow: none;
+  position: fixed;
+  left: 0;
+  right: 0;
+  background-color: #000000;
+  box-shadow: inset 0 0 4rem 6rem #000000;
+  background-image: url("/assets/f1_background.jpg");
+  background-position: center;
+  background-size: cover;
+  z-index: -1;
 
-    filter: blur(3px) grayscale(20%) brightness(.8);
-    .image {
-        height: 200%;
-        width: 100%;
-  
-    }
+  filter: grayscale(30%) brightness(0.4);
+
+  .image {
+    height: 200%;
+    width: 100%;
+  }
 }
 
 app-races {
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
 }

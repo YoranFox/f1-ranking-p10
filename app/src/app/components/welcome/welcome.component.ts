@@ -24,14 +24,12 @@ export class WelcomeComponent implements OnInit {
   onSubmit() {
     this.playersService.players$
       .subscribe((players) => {
-        console.log(players);
-
         if (players.some((player) => player.name === this.playerName)) {
-          localStorage.setItem('me', this.playerName);
+          this.playersService.setMe(this.playerName);
           this.router.navigate(['']);
         } else {
           this.playersService.create(this.playerName).then(() => {
-            localStorage.setItem('me', this.playerName);
+            this.playersService.setMe(this.playerName);
             this.router.navigate(['']);
           });
         }

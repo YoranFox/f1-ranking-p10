@@ -1,4 +1,4 @@
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, OnInit } from '@angular/core';
 import { PlayersService } from 'src/app/services/players.service';
 
 @Component({
@@ -6,9 +6,12 @@ import { PlayersService } from 'src/app/services/players.service';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
-export class HomeComponent {
+export class HomeComponent implements OnInit {
   me = '';
   constructor(private readonly playersService: PlayersService) {
+    this.me = this.playersService.me;
+  }
+  ngOnInit(): void {
     this.me = this.playersService.me;
   }
 }
