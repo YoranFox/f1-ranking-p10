@@ -1,0 +1,128 @@
+.ranking-container {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    margin-top: 50px;
+}
+
+.podium-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+}
+
+.placing-container {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform: translate(-50%);
+    max-width: 20vw;
+}
+
+.placing-name {
+    color: #F1F1E6;
+    text-align: center;
+    font-size: 1.1rem;
+    margin-top: 10px;
+    font-weight: 700;
+}
+.placing-points {
+    color: #F1F1E6;
+    text-align: center;
+    font-size: 1rem;
+    margin-top: 5px;
+    font-weight: 700;
+    background-color: #6e6e6e;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 3px;
+    border-radius: 10px;
+}
+
+.placing-image {
+
+
+}
+
+.profile-image {
+    height: 10vw;
+    width: 10vw;
+    border-radius: 100%;
+    border: 2px solid #F1F1E6;
+}
+
+.first {
+    left: 50%;
+    top: 4vw;
+}
+
+.second {
+    left: 27%;
+    top: 22vw;
+}
+
+.third {
+   left: 73%;
+    top: 22vw;
+
+}
+
+.podium-wrapper {
+    width: 70%;
+}
+
+.podium-image {
+    width: 100%;
+    margin-top: 100px;
+}
+
+.title-ranking {
+    font-size: 1.5rem;
+    color: #F1F1E6;
+    text-align: center;
+}
+
+.ranking-list{
+    background-color: #F1F1E6;
+    transform: translateY(-13vw);
+    min-height: 20px;
+    border-radius: 10px;
+}
+
+.ranking-list-item {
+    display: flex;
+    padding: 5px 10px;
+    flex-wrap: nowrap;
+    align-items: center;
+    span {
+        font-size: 1rem;
+        color:rgb(30, 34, 54);
+        font-weight: 700;
+    }
+
+    .list-points {
+        font-weight: 200;
+        font-size: .9rem;
+    }
+
+    .player-information {
+        display: flex;
+        flex-direction: column;
+        align-items: left;
+    }
+
+    .profile-image {
+        margin-right: 10px;
+        border-color: #BCC2DA;
+    }
+
+    .list-rank {
+        margin-left: auto;
+        margin-right: 15px;
+        font-size: 1.2rem;
+        span {
+            font-size: 1rem;
+        }
+    }
+}

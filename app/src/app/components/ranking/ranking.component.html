@@ -1,0 +1,42 @@
+<div class="ranking-container">
+  <div class="title-ranking">Leaderboard</div>
+  <div class="podium-container">
+    <div class="podium-wrapper">
+      <div class="placing-container first" *ngIf="firstPlayer">
+        <div class="placing-image profile-image">
+          <img src="/assets/stock_image.jpg" />
+        </div>
+        <span class="placing-name">{{ firstPlayer.name }}</span>
+        <span class="placing-points">{{ firstPlayer.points }}p</span>
+      </div>
+      <div class="placing-container second" *ngIf="secondPlayer">
+        <div class="placing-image profile-image">
+          <img src="/assets/stock_image.jpg" />
+        </div>
+        <span class="placing-name">{{ secondPlayer.name }}</span>
+        <span class="placing-points">{{ secondPlayer.points }}p</span>
+      </div>
+      <div class="placing-container third" *ngIf="thirdPlayer">
+        <div class="placing-image profile-image">
+          <img src="/assets/stock_image.jpg" />
+        </div>
+        <span class="placing-name">{{ thirdPlayer.name }}</span>
+        <span class="placing-points">{{ thirdPlayer.points }}p</span>
+      </div>
+      <img class="podium-image" src="/assets/podium.png" alt="image" />
+    </div>
+  </div>
+  <div class="ranking-list">
+    <div
+      class="ranking-list-item"
+      *ngFor="let player of playerList$ | async; index as i"
+    >
+      <div class="profile-image"><img src="/assets/stock_image.jpg" /></div>
+      <div class="player-information">
+        <span class="list-name">{{ player.name }}</span>
+        <span class="list-points">{{ player.points }} points</span>
+      </div>
+      <span class="list-rank"> {{ i + 4 }}<span>th</span> </span>
+    </div>
+  </div>
+</div>

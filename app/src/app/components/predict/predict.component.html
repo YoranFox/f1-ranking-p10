@@ -1,0 +1,77 @@
+<div class="predict-container">
+  <div class="header">
+    <div class="back" (click)="onBack()">←</div>
+    <div
+      class="predict-title"
+      *ngIf="raceNumber && getRace(raceNumber) as race"
+    >
+      {{ race.RaceName }}
+    </div>
+  </div>
+
+  <div class="question">Who is going to end p10?</div>
+  <div
+    class="selected-driver"
+    *ngIf="!changeP10 && selectedP10 && getDriver(selectedP10) as driver"
+  >
+    <div class="driver">
+      <span>{{ driver.PermanentNumber }}</span>
+      <span class="driver-name"
+        >{{ driver.GivenName }} {{ driver.FamilyName }}</span
+      >
+    </div>
+
+    <button class="change-button" (click)="changeP10 = true">
+      Change driver
+    </button>
+  </div>
+
+  <div class="drivers-container" *ngIf="changeP10">
+    <div
+      class="driver-item"
+      *ngFor="let driver of drivers"
+      (click)="onSelectP10(driver.PermanentNumber)"
+    >
+      <span>{{ driver.PermanentNumber }}</span>
+      <span class="driver-name"
+        >{{ driver.GivenName }} {{ driver.FamilyName }}</span
+      >
+    </div>
+  </div>
+
+  <div class="question">Who is going to retire first?</div>
+  <div
+    class="selected-driver"
+    *ngIf="
+      !changeRetire && selectedRetire && getDriver(selectedRetire) as driver
+    "
+  >
+    <div class="driver">
+      <span>{{ driver.PermanentNumber }}</span>
+      <span class="driver-name"
+        >{{ driver.GivenName }} {{ driver.FamilyName }}</span
+      >
+    </div>
+
+    <button class="change-button" (click)="changeRetire = true">
+      Change driver
+    </button>
+  </div>
+
+  <div class="drivers-container" *ngIf="changeRetire">
+    <div
+      class="driver-item"
+      *ngFor="let driver of drivers"
+      (click)="onSelectRetire(driver.PermanentNumber)"
+    >
+      <span>{{ driver.PermanentNumber }}</span>
+      <span class="driver-name"
+        >{{ driver.GivenName }} {{ driver.FamilyName }}</span
+      >
+    </div>
+  </div>
+
+  <div class="submit-button">
+    <button (click)="onSubmit()">Save</button>
+  </div>
+</div>
