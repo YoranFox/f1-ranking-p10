@@ -148,6 +148,10 @@ export class ResultsService {
         .then((response) => {
           const raceResult: any[] =
             JSON.parse(response).MRData.RaceTable.Races[0].Results;
+
+          if (!raceResult) {
+            return;
+          }
           let firsRetire: { number: number } | null = null;
           const retiredDrivers = raceResult.filter(
             (r) => r.positionText === 'R'
