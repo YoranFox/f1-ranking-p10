@@ -22,6 +22,7 @@ export class RacesComponent implements OnInit, AfterViewInit {
   selectedRace: number = getNextRaceNumber();
   results$: Observable<Result[]> | undefined;
   sub: Subscription | undefined;
+  isCalculated = false;
 
   predictions: Prediction[] = [];
 
@@ -42,12 +43,21 @@ export class RacesComponent implements OnInit, AfterViewInit {
       .subscribe((p) => {
         this.predictions = p;
       });
+    this.filterChanged();
+  }
 
+  filterChanged() {
     this.results$ = this.resultsService.results$.pipe(
       map((players) =>
         players.filter((player) => player.raceNumber === this.selectedRace)
       )
     );
+
+    this.isCalculated =
+      !!this.resultsService.resultsCalculated &&
+      this.resultsService.resultsCalculated.some(
+        (r) => r === this.selectedRace
+      );
   }
 
   ngOnDestroy(): void {
@@ -105,6 +115,7 @@ export class RacesComponent implements OnInit, AfterViewInit {
   onSelectRace(raceNumber: number) {
     this.selectedRace = raceNumber;
     this.resultsService.results$.subscribe();
+    this.filterChanged();
     this.scrollToCard();
   }
 

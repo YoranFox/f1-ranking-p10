@@ -1,7 +1,6 @@
 export const getNextRaceNumber = () => {
   const nextRace = schedule.MRData.RaceTable.Race.findIndex((race) => {
-    const raceDate = new Date(race.Date);
-    raceDate.setUTCHours(23, 59, 59, 999);
+    const raceDate = new Date(`${race.Date}T${race.Time}`);
     return raceDate > new Date();
   });
   return nextRace + 1;

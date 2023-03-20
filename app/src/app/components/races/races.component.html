@@ -58,10 +58,17 @@
   <div class="result-future-race" *ngIf="!inPast(race.Date)">
     Come back after the race!
   </div>
-  <div class="result-future-race" *ngIf="(results$ | async)?.length == 0">
-    Waiting for race results!
-  </div>
+
   <div class="player-results-list" *ngIf="inPast(race.Date)">
+    <div
+      class="result-future-race"
+      *ngIf="isCalculated && (results$ | async)?.length === 0"
+    >
+      No results for this race!
+    </div>
+    <div class="result-future-race" *ngIf="!isCalculated">
+      Waiting for race results!
+    </div>
     <div class="result-item" *ngFor="let result of results$ | async">
       <span class="player-name"> {{ result.playerName }}</span>
       <div

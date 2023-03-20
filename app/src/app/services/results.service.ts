@@ -51,6 +51,7 @@ export class ResultsService {
   private resultsSubject: BehaviorSubject<Result[]> = new BehaviorSubject<
     Result[]
   >([]);
+  public resultsCalculated: number[] | undefined;
   private unsubscribeResultByPlayer: Unsubscribe | undefined;
 
   private resultLastUpdated: Date | undefined;
@@ -74,6 +75,13 @@ export class ResultsService {
       const data = snapshot.val();
       this.resultLastUpdated = new Date(Number(data));
     });
+
+    onValue(ref(this.db.database, 'results-calculated'), (snapshot) => {
+      const data = snapshot.val();
+
+      this.resultsCalculated = data ? data : [];
+    });
+
     setInterval(() => {
       this.calculateResults();
     }, 10 * 1000);
@@ -106,85 +114,98 @@ export class ResultsService {
 
     const nextRaceNumber = getNextRaceNumber();
 
-    const nextRace = getRace(nextRaceNumber);
-
-    // only update when its race day
-    if (new Date(nextRace.Date) > new Date()) {
-      return;
-    }
-
     // We only update once so many minutes
-    const nextUdpate = this.resultLastUpdated.valueOf() + 5 * 60000;
+    const nextUdpate = this.resultLastUpdated.valueOf() + 1 * 60000;
     if (new Date(nextUdpate) > new Date()) {
       return;
     }
-
-    // If there already are results of the race we return
-    if (
-      this.resultsSubject.value.some(
-        (result) => result.raceNumber === nextRaceNumber
-      )
-    ) {
+    if (this.resultsCalculated === undefined) {
       return;
     }
+
+    let toCheck = [
+      1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
+      22, 23,
+    ];
+
+    toCheck = toCheck.filter((r) => r < nextRaceNumber);
+
+    // If there already are results of the race we return
+    toCheck = toCheck.filter((r) => {
+      return !this.resultsCalculated?.includes(r);
+    });
 
     set(this.lastResultsRef, new Date().valueOf());
 
     get(child(ref(this.db.database), `predictions`)).then((snapshot) => {
       const data = snapshot.val() as PredictionsStored;
       const predictions = transformPredictStoreData(data);
-      const racePredictions = predictions.filter(
-        (prediction) => prediction.raceNumber === nextRaceNumber
-      );
 
-      const url = `https://ergast.com/api/f1/current/${nextRaceNumber}/results.json`;
+      for (let raceNumber of toCheck) {
+        const racePredictions = predictions.filter(
+          (prediction) => prediction.raceNumber === raceNumber
+        );
 
-      fetch(url, {
-        headers: {
-          Accept: 'application/json',
-        },
-      })
-        .then((response) => response.text())
-        .then((response) => {
-          const raceResult: any[] =
-            JSON.parse(response).MRData.RaceTable.Races[0].Results;
+        const url = `https://ergast.com/api/f1/current/${raceNumber}/results.json`;
 
-          if (!raceResult) {
-            return;
-          }
-          let firsRetire: { number: number } | null = null;
-          const retiredDrivers = raceResult.filter(
-            (r) => r.positionText === 'R'
-          );
-          if (retiredDrivers.length > 0) {
-            firsRetire = retiredDrivers[retiredDrivers.length - 1];
-          }
+        fetch(url, {
+          headers: {
+            Accept: 'application/json',
+          },
+        })
+          .then((response) => response.text())
+          .then((response) => {
+            const raceResult: any[] =
+              JSON.parse(response).MRData.RaceTable.Races[0].Results;
 
-          const results: Result[] = [];
-          racePredictions.forEach((prediction) => {
-            const correctFirstRetire = prediction.retire === firsRetire?.number;
-
-            const p10Driver = raceResult.find(
-              (r) => r.number === prediction.p10
+            if (!raceResult) {
+              return;
+            }
+            let firsRetire: any | null = null;
+            const retiredDrivers = raceResult.filter(
+              (r) => r.positionText === 'R'
             );
-            const delta10 = Math.abs(Number(p10Driver.position) - 10);
+            if (retiredDrivers.length > 0) {
+              firsRetire = retiredDrivers[retiredDrivers.length - 1];
+            }
 
-            const result: Result = {
-              playerName: prediction.playerName,
-              raceNumber: nextRaceNumber,
-              p10: {
-                driver: prediction.p10,
-                points: points[delta10],
-              },
-              retire: {
-                driver: prediction.retire,
-                points: correctFirstRetire ? 10 : 0,
-              },
-            };
-            results.push(result);
+            const results: Result[] = [];
+            racePredictions.forEach((prediction) => {
+              const correctFirstRetire =
+                Number(prediction.retire) ===
+                firsRetire?.Driver.permanentNumber;
+
+              const p10Driver = raceResult.find((r) => {
+                return Number(r.Driver.permanentNumber) === prediction.p10;
+              });
+
+              const delta10 = Math.abs(Number(p10Driver.position) - 10);
+
+              const result: Result = {
+                playerName: prediction.playerName,
+                raceNumber: raceNumber,
+                p10: {
+                  driver: prediction.p10,
+                  points: points[delta10],
+                },
+                retire: {
+                  driver: prediction.retire,
+                  points: correctFirstRetire ? 10 : 0,
+                },
+              };
+              results.push(result);
+            });
+            const newResultsCalculated = this.resultsCalculated
+              ? [...this.resultsCalculated, raceNumber]
+              : [raceNumber];
+            set(
+              ref(this.db.database, 'results-calculated'),
+              newResultsCalculated
+            );
+
+            this.createResults(results);
           });
-          this.createResults(results);
-        });
+      }
     });
   }
 
@@ -247,8 +268,6 @@ export class ResultsService {
           const results: Result[] = [];
           racePredictions.forEach((prediction) => {
             const correctFirstRetire = prediction.retire === firsRetire?.number;
-
-            console.log(raceResult, prediction);
 
             const p10Driver = raceResult.find(
               (r) => Number(r.number) === prediction.p10
