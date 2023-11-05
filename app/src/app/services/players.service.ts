@@ -3,6 +3,7 @@ import { AngularFireDatabase } from '@angular/fire/compat/database';
 import { Router } from '@angular/router';
 import { ref, set, onValue, DatabaseReference } from 'firebase/database';
 import { BehaviorSubject, Subject } from 'rxjs';
+import { ResultsService } from './results.service';
 
 export interface Player {
   points: number;
@@ -52,7 +53,10 @@ export class PlayersService {
     this.me = me;
   }
 
-  create(playerName: string) {
+  async create(playerName: string) {
+    if (playerName === '' || playerName === null) {
+      return null;
+    }
     return set(ref(this.db.database, 'players/' + playerName), {
       points: 0,
     });

@@ -52,21 +52,18 @@ export class ResultsService {
     Result[]
   >([]);
   public resultsCalculated: number[] | undefined;
-  private unsubscribeResultByPlayer: Unsubscribe | undefined;
 
   private resultLastUpdated: Date | undefined;
 
   public results$ = this.resultsSubject.asObservable();
 
-  constructor(
-    private db: AngularFireDatabase,
-    private playerService: PlayersService
-  ) {
+  constructor(private db: AngularFireDatabase) {
     this.resultsRef = ref(db.database, 'results');
     this.lastResultsRef = ref(this.db.database, 'result-last-updated');
 
     onValue(this.resultsRef, (snapshot) => {
       const data = snapshot.val() as ResultsStored;
+
       const results = this.transformResultStoreData(data);
       this.resultsSubject.next(results);
     });
@@ -86,8 +83,6 @@ export class ResultsService {
       this.calculateResults();
     }, 10 * 1000);
   }
-
-  getResultsByPlayer(playerName: string) {}
 
   private transformResultStoreData(storeData: ResultsStored): Result[] {
     return Object.entries(storeData).flatMap(([raceNumber, data]) => {
@@ -115,7 +110,7 @@ export class ResultsService {
     const nextRaceNumber = getNextRaceNumber();
 
     // We only update once so many minutes
-    const nextUdpate = this.resultLastUpdated.valueOf() + 1 * 60000;
+    const nextUdpate = this.resultLastUpdated.valueOf() + 5 * 60000;
     if (new Date(nextUdpate) > new Date()) {
       return;
     }
@@ -134,6 +129,10 @@ export class ResultsService {
     toCheck = toCheck.filter((r) => {
       return !this.resultsCalculated?.includes(r);
     });
+
+    if (toCheck.length === 0) {
+      return;
+    }
 
     set(this.lastResultsRef, new Date().valueOf());
 
@@ -165,6 +164,7 @@ export class ResultsService {
             const retiredDrivers = raceResult.filter(
               (r) => r.positionText === 'R'
             );
+
             if (retiredDrivers.length > 0) {
               firsRetire = retiredDrivers[retiredDrivers.length - 1];
             }
@@ -173,7 +173,7 @@ export class ResultsService {
             racePredictions.forEach((prediction) => {
               const correctFirstRetire =
                 Number(prediction.retire) ===
-                firsRetire?.Driver.permanentNumber;
+                Number(firsRetire?.Driver.permanentNumber);
 
               const p10Driver = raceResult.find((r) => {
                 return Number(r.Driver.permanentNumber) === prediction.p10;
@@ -222,76 +222,83 @@ export class ResultsService {
 
     updates[`results/${results[0].raceNumber.toString()}`] = data;
 
-    this.playerService.players$.subscribe((value) => {
-      results.forEach((result) => {
-        const player = value.find((v) => v.name === result.playerName);
-        if (!player) {
-          return;
-        }
-        updates[`players/${player.name}`] = {
-          points: player.points + result.p10.points + result.retire.points,
-        };
-      });
-    });
-
     update(ref(this.db.database), updates);
   }
 
-  test() {
-    const nextRaceNumber = 1;
-    get(child(ref(this.db.database), `predictions`)).then((snapshot) => {
-      const data = snapshot.val() as PredictionsStored;
-      const predictions = transformPredictStoreData(data);
-      const racePredictions = predictions.filter(
-        (prediction) => prediction.raceNumber === nextRaceNumber
-      );
+  // test() {
+  //   let toCheck = [3];
+  //   get(child(ref(this.db.database), `predictions`)).then((snapshot) => {
+  //     const data = snapshot.val() as PredictionsStored;
+  //     const predictions = transformPredictStoreData(data);
 
-      const url = `https://ergast.com/api/f1/current/${nextRaceNumber}/results.json`;
+  //     for (let raceNumber of toCheck) {
+  //       const racePredictions = predictions.filter(
+  //         (prediction) => prediction.raceNumber === raceNumber
+  //       );
 
-      fetch(url, {
-        headers: {
-          Accept: 'application/json',
-        },
-      })
-        .then((response) => response.text())
-        .then((response) => {
-          const raceResult: any[] =
-            JSON.parse(response).MRData.RaceTable.Races[0].Results;
-          let firsRetire: { number: number } | null = null;
-          const retiredDrivers = raceResult.filter(
-            (r) => r.positionText === 'R'
-          );
-          if (retiredDrivers.length > 0) {
-            firsRetire = retiredDrivers[retiredDrivers.length - 1];
-          }
+  //       const url = `https://ergast.com/api/f1/current/${raceNumber}/results.json`;
 
-          const results: Result[] = [];
-          racePredictions.forEach((prediction) => {
-            const correctFirstRetire = prediction.retire === firsRetire?.number;
+  //       fetch(url, {
+  //         headers: {
+  //           Accept: 'application/json',
+  //         },
+  //       })
+  //         .then((response) => response.text())
+  //         .then((response) => {
+  //           const raceResult: any[] =
+  //             JSON.parse(response).MRData.RaceTable.Races[0].Results;
 
-            const p10Driver = raceResult.find(
-              (r) => Number(r.number) === prediction.p10
-            );
-            const delta10 = Math.abs(Number(p10Driver.position) - 10);
+  //           if (!raceResult) {
+  //             return;
+  //           }
+  //           let firsRetire: any | null = null;
+  //           const retiredDrivers = raceResult.filter(
+  //             (r) => r.positionText === 'R'
+  //           );
 
-            const result: Result = {
-              playerName: prediction.playerName,
-              raceNumber: nextRaceNumber,
-              p10: {
-                driver: prediction.p10,
-                points: points[delta10],
-              },
-              retire: {
-                driver: prediction.retire,
-                points: correctFirstRetire ? 10 : 0,
-              },
-            };
-            results.push(result);
-          });
-          this.createResults(results);
-        });
-    });
-  }
+  //           if (retiredDrivers.length > 0) {
+  //             firsRetire = retiredDrivers[retiredDrivers.length - 1];
+  //           }
+
+  //           const results: Result[] = [];
+  //           racePredictions.forEach((prediction) => {
+  //             const correctFirstRetire =
+  //               Number(prediction.retire) ===
+  //               Number(firsRetire?.Driver.permanentNumber);
+
+  //             const p10Driver = raceResult.find((r) => {
+  //               return Number(r.Driver.permanentNumber) === prediction.p10;
+  //             });
+
+  //             const delta10 = Math.abs(Number(p10Driver.position) - 10);
+
+  //             const result: Result = {
+  //               playerName: prediction.playerName,
+  //               raceNumber: raceNumber,
+  //               p10: {
+  //                 driver: prediction.p10,
+  //                 points: points[delta10],
+  //               },
+  //               retire: {
+  //                 driver: prediction.retire,
+  //                 points: correctFirstRetire ? 10 : 0,
+  //               },
+  //             };
+  //             results.push(result);
+  //           });
+  //           const newResultsCalculated = this.resultsCalculated
+  //             ? [...this.resultsCalculated, raceNumber]
+  //             : [raceNumber];
+  //           set(
+  //             ref(this.db.database, 'results-calculated'),
+  //             newResultsCalculated
+  //           );
+
+  //           this.createResults(results);
+  //         });
+  //     }
+  //   });
+  // }
 }
 
 export const points = [25, 18, 15, 12, 10, 8, 6, 4, 2, 1, 1, 1];

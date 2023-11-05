@@ -22,6 +22,9 @@ export class WelcomeComponent implements OnInit {
   }
 
   onSubmit() {
+    if (this.playerName === '' || this.playerName === null) {
+      return;
+    }
     this.playersService.players$
       .subscribe((players) => {
         if (players.some((player) => player.name === this.playerName)) {

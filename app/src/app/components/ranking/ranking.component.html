@@ -27,10 +27,7 @@
     </div>
   </div>
   <div class="ranking-list">
-    <div
-      class="ranking-list-item"
-      *ngFor="let player of playerList$ | async; index as i"
-    >
+    <div class="ranking-list-item" *ngFor="let player of playerList; index as i">
       <div class="profile-image"><img src="/assets/stock_image.jpg" /></div>
       <div class="player-information">
         <span class="list-name">{{ player.name }}</span>

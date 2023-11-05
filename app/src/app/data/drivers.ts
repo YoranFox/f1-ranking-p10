@@ -31,7 +31,7 @@ export const drivers = {
           Nationality: 'Finnish',
         },
         {
-          PermanentNumber: 45,
+          PermanentNumber: 21,
           GivenName: 'Nyck',
           FamilyName: 'de Vries',
           DateOfBirth: '1995-02-06',
